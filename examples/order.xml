@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<order xmlns="urn:orders" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <id>ORD-001</id>
+  <amount>123.45</amount>
+  <active>false</active>
+  <items>
+    <item>
+      <sku>A&amp;B &lt;x&gt;</sku>
+    </item>
+  </items>
+</order>

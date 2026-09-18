@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:orders" xmlns="urn:orders" elementFormDefault="qualified">
+  <xs:element name="order">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="id" minOccurs="1">
+          <xs:simpleType>
+           <xs:restriction base="xs:string">
+            <xs:maxLength value="20"/>
+           </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="amount" minOccurs="1">
+          <xs:simpleType>
+           <xs:restriction base="xs:decimal">
+            <xs:totalDigits value="5"/>
+            <xs:fractionDigits value="2"/>
+            <xs:minExclusive value="-1000"/>
+            <xs:maxExclusive value="1000"/>
+           </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="active" minOccurs="0">
+          <xs:simpleType>
+           <xs:restriction base="xs:boolean">
+           </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="items" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="item" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="sku" minOccurs="0">
+                      <xs:simpleType>
+                       <xs:restriction base="xs:string">
+                        <xs:maxLength value="50"/>
+                       </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                  </xs:sequence>
+
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

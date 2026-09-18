@@ -1,0 +1,10 @@
+{
+  "id": "ORD-001",
+  "amount": 123.45,
+  "active": false,
+  "items": [
+    {
+      "sku": "A&B <x>"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "order",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "amount": {
+      "type": "number",
+      "multipleOf": 0.01,
+      "x-fraction-digits": 2,
+      "exclusiveMinimum": -1000,
+      "exclusiveMaximum": 1000,
+      "x-total-digits": 5
+    },
+    "active": {
+      "type": "boolean"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sku": {
+            "type": "string",
+            "maxLength": 50
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "id",
+    "amount"
+  ]
+}

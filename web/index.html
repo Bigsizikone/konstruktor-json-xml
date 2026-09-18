@@ -1,0 +1,96 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Конструктор сообщений</title><link rel="stylesheet" href="style.css"></head><body>
+<header><div class="brand"><span>{ }</span><h1>Конструктор сообщений</h1></div><div class="actions"><button id="open">Открыть проект</button><button id="save" class="primary">Сохранить</button></div></header>
+<nav class="toolbar"><div class="switch"><button id="jsonMode" class="active">JSON</button><button id="xmlMode">XML</button><button id="umlMode">UML диаграммы</button></div><div class="actions" id="messageActions"><button id="excelOpen">Загрузить Excel</button><button id="import">Из текста в таблицу</button><button id="schema">Создать схему</button><button id="generate" class="primary">Создать JSON</button></div></nav>
+<main id="builderView"><section class="structure"><div class="section-head"><h2>Структура сообщения</h2><div class="actions"><button id="add" class="primary">+ Добавить поле</button><button id="child">+ Вложенное поле</button><button id="delete" class="danger" title="Удалить выбранное поле" aria-label="Удалить выбранное поле">Удалить</button></div></div><div class="table-wrap"><table><thead><tr><th>Атрибут</th><th>Тип</th><th>Длина</th><th>Цифр</th><th>Дробь</th><th>Обяз.</th></tr></thead><tbody id="rows"></tbody></table></div>
+<section class="inspector"><h2>Параметры поля</h2><div class="fields"><div><label>Имя<input id="name"></label><label>Значение<input id="value" placeholder="Значение в сообщении"></label><label>Описание<textarea id="description" rows="3"></textarea></label><label>Исходное имя<input id="source" placeholder="Например, из Excel"></label></div><div><label>Тип<select id="type"></select></label><label>Длина<input id="len" type="number" min="0"></label><label>Всего цифр<input id="digits" type="number" min="1" max="15"></label><label>После запятой<input id="scale" type="number" min="0" max="15"></label><label class="check-label">Обязательное<input id="required" type="checkbox"></label><label class="check-label xml-only" hidden>XML-атрибут<input id="xmlAttribute" type="checkbox"></label></div></div><label class="xml-only namespace" hidden>Пространство имён<input id="namespace" placeholder="Например, urn:company:orders"></label><p class="hint">Длина и разрядность — ограничения схемы. Пустое поле означает, что ограничение не задано.</p></section></section>
+<section class="output"><div class="tabs"><button id="messageTab" class="selected">Сообщение</button><button id="schemaTab">Схема</button><button id="loadText" class="text-button">Открыть файл</button></div><div class="editor"><div id="lines" aria-hidden="true">1</div><textarea id="code" spellcheck="false" aria-label="Текст сообщения или схемы"></textarea></div><div class="editor-footer"><span id="formatLabel">JSON</span><div class="actions"><button id="copy">Копировать</button><button id="download">Скачать</button></div></div><p class="hint output-hint" id="importHint">Вставьте сообщение и нажмите «Из текста в таблицу». Ограничения загружаются из схемы или проекта.</p></section></main>
+<section id="umlView" class="uml-view" hidden>
+  <aside class="uml-controls">
+    <h2>Участники взаимодействия</h2>
+    <div class="uml-fields">
+      <h3 class="uml-subtitle">Прямой путь</h3>
+      <label>Система-отправитель<input id="senderSystem" value="1С:ERP"></label>
+      <label>Интерфейс отправителя<input id="senderInterface" value="REST API 1С:ERP"></label>
+      <label>Сообщение запроса<input id="payloadName" value="Заказ клиента"></label>
+      <label>Формат запроса<select id="payloadFormat"><option>JSON</option><option>XML</option><option>JSON / XML</option><option>Двоичный</option></select></label>
+      <label>Способ отправки<select id="transferMethod"><option>Kafka topic</option><option>RabbitMQ / AMQP</option><option>HTTP REST</option><option>SOAP</option><option>SFTP / файл</option><option>Прямой вызов</option></select></label>
+      <label>Система-получатель<input id="receiverSystem" value="CRM"></label>
+      <label>Режим взаимодействия<select id="interactionMode"><option>Асинхронный</option><option>Синхронный</option></select></label>
+      <label class="check-label">Использовать брокер<input id="useBroker" type="checkbox" checked></label>
+      <label id="brokerNameLabel">Брокер / шина<input id="brokerSystem" value="Kafka"></label>
+      <h3 class="uml-subtitle">Обратный путь</h3>
+      <label class="check-label">Показывать возврат<input id="useReturn" type="checkbox" checked></label>
+      <label data-return-field>Интерфейс ответа<input id="returnInterface" value="REST API CRM"></label>
+      <label data-return-field>Сообщение ответа<input id="responsePayload" value="Результат обработки"></label>
+      <label data-return-field>Формат ответа<select id="responseFormat"><option>JSON</option><option>XML</option><option>JSON / XML</option><option>Двоичный</option></select></label>
+      <label data-return-field>Способ возврата<select id="returnMethod"><option>Kafka topic</option><option>RabbitMQ / AMQP</option><option selected>HTTP REST</option><option>SOAP</option><option>SFTP / файл</option><option>Прямой вызов</option></select></label>
+      <label data-return-field>Получатель ответа<input id="returnReceiver" value="1С:ERP"></label>
+    </div>
+  </aside>
+  <div class="uml-workspace">
+    <div class="tabs uml-tabs" aria-label="Вид UML-диаграммы">
+      <button id="componentDiagramTab" class="selected" aria-pressed="true">Диаграмма компонентов</button>
+      <button id="flowDiagramTab" aria-pressed="false">Схема потоков данных</button>
+      <button id="plantUmlExport" class="text-button">PlantUML</button>
+    </div>
+    <div class="uml-canvas">
+      <svg id="componentDiagram" class="uml-svg" viewBox="0 0 920 500" role="img" aria-labelledby="componentDiagramTitle componentDiagramDescription">
+        <title id="componentDiagramTitle">Диаграмма компонентов интеграционного взаимодействия</title><desc id="componentDiagramDescription">Полный путь запроса до получателя и ответа до системы получения результата.</desc>
+        <defs><marker id="componentArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"/></marker></defs>
+        <text id="componentHeading" class="diagram-heading" x="460" y="34" text-anchor="middle">Диаграмма компонентов интеграционного взаимодействия</text>
+        <text class="route-caption" x="20" y="78">Запрос →</text><text id="componentForwardMethod" class="arrow-label" x="645" y="78" text-anchor="middle">Kafka topic · Асинхронный</text>
+        <g id="componentSenderGroup" class="uml-node"><rect x="20" y="110" width="140" height="84" rx="8"/><text class="stereotype" x="90" y="137" text-anchor="middle">«system»</text><text id="componentSender" x="90" y="169" text-anchor="middle">1С:ERP</text></g>
+        <g id="componentSenderInterfaceGroup" class="uml-node interface-node"><rect x="205" y="110" width="140" height="84" rx="8"/><text class="stereotype" x="275" y="137" text-anchor="middle">«interface»</text><text id="componentSenderInterface" x="275" y="169" text-anchor="middle">REST API 1С:ERP</text></g>
+        <g id="componentRequestDataGroup" class="uml-node data-node"><rect x="390" y="110" width="140" height="84" rx="8"/><text class="stereotype" x="460" y="137" text-anchor="middle">«data»</text><text id="componentRequestData" x="460" y="169" text-anchor="middle">Заказ клиента · JSON</text></g>
+        <g id="componentBrokerGroup" class="uml-node broker-node"><rect x="575" y="110" width="140" height="84" rx="8"/><text class="stereotype" x="645" y="137" text-anchor="middle">«broker»</text><text id="componentBroker" x="645" y="169" text-anchor="middle">Kafka</text></g>
+        <g id="componentReceiverGroup" class="uml-node"><rect x="760" y="110" width="140" height="84" rx="8"/><text class="stereotype" x="830" y="137" text-anchor="middle">«system»</text><text id="componentReceiver" x="830" y="169" text-anchor="middle">CRM</text></g>
+        <path id="componentForward1" class="uml-arrow" d="M160 152 H205" marker-end="url(#componentArrow)"/><path id="componentForward2" class="uml-arrow" d="M345 152 H390" marker-end="url(#componentArrow)"/><path id="componentForward3" class="uml-arrow" d="M530 152 H575" marker-end="url(#componentArrow)"/><path id="componentForward4" class="uml-arrow" d="M715 152 H760" marker-end="url(#componentArrow)"/>
+        <g id="componentReturnRoute">
+          <text class="route-caption" x="20" y="286">← Ответ</text><text id="componentReturnMethod" class="arrow-label" x="645" y="286" text-anchor="middle">HTTP REST · Асинхронный</text>
+          <g id="componentReturnReceiverGroup" class="uml-node"><rect x="20" y="320" width="140" height="84" rx="8"/><text class="stereotype" x="90" y="347" text-anchor="middle">«system»</text><text id="componentReturnReceiver" x="90" y="379" text-anchor="middle">1С:ERP</text></g>
+          <g id="componentResponseDataGroup" class="uml-node data-node"><rect x="205" y="320" width="140" height="84" rx="8"/><text class="stereotype" x="275" y="347" text-anchor="middle">«data»</text><text id="componentResponseData" x="275" y="379" text-anchor="middle">Результат · JSON</text></g>
+          <g id="componentReturnInterfaceGroup" class="uml-node interface-node"><rect x="390" y="320" width="140" height="84" rx="8"/><text class="stereotype" x="460" y="347" text-anchor="middle">«interface»</text><text id="componentReturnInterface" x="460" y="379" text-anchor="middle">REST API CRM</text></g>
+          <g id="componentReturnBrokerGroup" class="uml-node broker-node"><rect x="575" y="320" width="140" height="84" rx="8"/><text class="stereotype" x="645" y="347" text-anchor="middle">«broker»</text><text id="componentReturnBroker" x="645" y="379" text-anchor="middle">Kafka</text></g>
+          <g id="componentReturnOriginGroup" class="uml-node"><rect x="760" y="320" width="140" height="84" rx="8"/><text class="stereotype" x="830" y="347" text-anchor="middle">«system»</text><text id="componentReturnOrigin" x="830" y="379" text-anchor="middle">CRM</text></g>
+          <path id="componentReturn1" class="uml-arrow return-arrow" d="M760 362 H715" marker-end="url(#componentArrow)"/><path id="componentReturn2" class="uml-arrow return-arrow" d="M575 362 H530" marker-end="url(#componentArrow)"/><path id="componentReturn3" class="uml-arrow return-arrow" d="M390 362 H345" marker-end="url(#componentArrow)"/><path id="componentReturn4" class="uml-arrow return-arrow" d="M205 362 H160" marker-end="url(#componentArrow)"/>
+        </g>
+      </svg>
+      <svg id="flowDiagram" class="uml-svg" viewBox="0 0 920 500" role="img" aria-labelledby="flowDiagramTitle flowDiagramDescription" hidden>
+        <title id="flowDiagramTitle">Схема интеграционного взаимодействия и потоков данных</title><desc id="flowDiagramDescription">Два направленных потока: запрос и возвращаемый ответ.</desc>
+        <defs><marker id="flowArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"/></marker></defs>
+        <text id="flowHeading" class="diagram-heading" x="460" y="34" text-anchor="middle">Схема интеграционного взаимодействия и потоков данных</text>
+        <g id="flowForwardLane" class="flow-lane"><rect x="12" y="62" width="896" height="170" rx="8"/><text x="28" y="89">Запрос</text></g>
+        <g id="flowReturnLane" class="flow-lane return-lane"><rect x="12" y="270" width="896" height="170" rx="8"/><text x="28" y="297">Ответ</text></g>
+        <g id="flowSenderGroup" class="uml-node"><rect x="20" y="110" width="140" height="84" rx="8"/><text class="stereotype" x="90" y="137" text-anchor="middle">Источник</text><text id="flowSender" x="90" y="169" text-anchor="middle">1С:ERP</text></g>
+        <g id="flowSenderInterfaceGroup" class="uml-node interface-node"><rect x="205" y="110" width="140" height="84" rx="8"/><text class="stereotype" x="275" y="137" text-anchor="middle">Интерфейс</text><text id="flowSenderInterface" x="275" y="169" text-anchor="middle">REST API 1С:ERP</text></g>
+        <g id="flowRequestDataGroup" class="uml-node data-node"><rect x="390" y="110" width="140" height="84" rx="8"/><text class="stereotype" x="460" y="137" text-anchor="middle">Сообщение</text><text id="flowRequestData" x="460" y="169" text-anchor="middle">Заказ клиента · JSON</text></g>
+        <g id="flowBrokerGroup" class="uml-node broker-node"><rect x="575" y="110" width="140" height="84" rx="8"/><text class="stereotype" x="645" y="137" text-anchor="middle">Транспорт</text><text id="flowBroker" x="645" y="169" text-anchor="middle">Kafka</text></g>
+        <g id="flowReceiverGroup" class="uml-node"><rect x="760" y="110" width="140" height="84" rx="8"/><text class="stereotype" x="830" y="137" text-anchor="middle">Получатель</text><text id="flowReceiver" x="830" y="169" text-anchor="middle">CRM</text></g>
+        <path id="flowForward1" class="uml-arrow" d="M160 152 H205" marker-end="url(#flowArrow)"/><path id="flowForward2" class="uml-arrow" d="M345 152 H390" marker-end="url(#flowArrow)"/><path id="flowForward3" class="uml-arrow" d="M530 152 H575" marker-end="url(#flowArrow)"/><path id="flowForward4" class="uml-arrow" d="M715 152 H760" marker-end="url(#flowArrow)"/><text id="flowForwardMethod" class="arrow-label" x="645" y="216" text-anchor="middle">Kafka topic · Асинхронный</text>
+        <g id="flowReturnRoute">
+          <g id="flowReturnReceiverGroup" class="uml-node"><rect x="20" y="320" width="140" height="84" rx="8"/><text class="stereotype" x="90" y="347" text-anchor="middle">Получатель ответа</text><text id="flowReturnReceiver" x="90" y="379" text-anchor="middle">1С:ERP</text></g>
+          <g id="flowResponseDataGroup" class="uml-node data-node"><rect x="205" y="320" width="140" height="84" rx="8"/><text class="stereotype" x="275" y="347" text-anchor="middle">Сообщение</text><text id="flowResponseData" x="275" y="379" text-anchor="middle">Результат · JSON</text></g>
+          <g id="flowReturnInterfaceGroup" class="uml-node interface-node"><rect x="390" y="320" width="140" height="84" rx="8"/><text class="stereotype" x="460" y="347" text-anchor="middle">Интерфейс ответа</text><text id="flowReturnInterface" x="460" y="379" text-anchor="middle">REST API CRM</text></g>
+          <g id="flowReturnBrokerGroup" class="uml-node broker-node"><rect x="575" y="320" width="140" height="84" rx="8"/><text class="stereotype" x="645" y="347" text-anchor="middle">Транспорт</text><text id="flowReturnBroker" x="645" y="379" text-anchor="middle">Kafka</text></g>
+          <g id="flowReturnOriginGroup" class="uml-node"><rect x="760" y="320" width="140" height="84" rx="8"/><text class="stereotype" x="830" y="347" text-anchor="middle">Источник ответа</text><text id="flowReturnOrigin" x="830" y="379" text-anchor="middle">CRM</text></g>
+          <path id="flowReturn1" class="uml-arrow return-arrow" d="M760 362 H715" marker-end="url(#flowArrow)"/><path id="flowReturn2" class="uml-arrow return-arrow" d="M575 362 H530" marker-end="url(#flowArrow)"/><path id="flowReturn3" class="uml-arrow return-arrow" d="M390 362 H345" marker-end="url(#flowArrow)"/><path id="flowReturn4" class="uml-arrow return-arrow" d="M205 362 H160" marker-end="url(#flowArrow)"/><text id="flowReturnMethod" class="arrow-label" x="645" y="426" text-anchor="middle">HTTP REST · Асинхронный</text>
+        </g>
+      </svg>
+    </div>
+    <div class="uml-legend"><span><i class="legend-system"></i> Система / интерфейс</span><span><i class="legend-broker"></i> Брокер / транспорт</span><span><i class="legend-flow"></i> Прямой поток</span><span><i class="legend-return"></i> Обратный поток</span></div>
+  </div>
+</section>
+<dialog id="excelDialog" class="excel-dialog" aria-labelledby="excelDialogTitle">
+  <div class="dialog-heading"><div><h2 id="excelDialogTitle">Импорт структуры из Excel</h2><p id="excelFileName" class="dialog-subtitle">Выберите файл .xlsx или .xls</p></div><button id="excelClose" class="dialog-close" aria-label="Закрыть">×</button></div>
+  <div class="excel-settings">
+    <button id="excelChoose">Выбрать Excel-файл</button>
+    <label>Лист<select id="excelSheet" disabled></select></label>
+    <label>Колонка атрибутов<select id="excelNameColumn" disabled></select></label>
+    <label>Колонка типа<select id="excelTypeColumn" disabled></select></label>
+    <label>Колонка длины / точности<select id="excelSizeColumn" disabled></select></label>
+    <label>Стиль английского имени<select id="excelNameStyle"><option value="snake">snake_case</option><option value="snakeCaps">Snake_Case</option></select></label>
+  </div>
+  <div class="excel-preview-wrap"><table class="excel-preview"><thead><tr><th>Исходное имя</th><th>Английское имя</th><th>Тип</th><th>Длина / точность</th><th>Результат</th></tr></thead><tbody id="excelPreviewRows"><tr><td colspan="5">После выбора файла здесь появится предварительный просмотр.</td></tr></tbody></table></div>
+  <div class="dialog-footer"><span id="excelStatus" role="status" aria-live="polite"></span><div class="actions"><button id="excelCancel">Отмена</button><button id="excelImport" class="primary" disabled>Загрузить в таблицу</button></div></div>
+</dialog>
+<footer><span id="status" role="status">Готово</span><span>Данные остаются на вашем устройстве</span></footer><input id="file" type="file" hidden><input id="excelFile" type="file" accept=".xlsx,.xls" hidden><script src="xlsx.full.min.js"></script><script src="core.js"></script><script src="app.js"></script></body></html>
