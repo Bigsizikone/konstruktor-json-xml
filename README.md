@@ -35,3 +35,7 @@
 ## Лицензия
 
 Код проекта распространяется по лицензии MIT. Сведения о сторонних компонентах приведены в `THIRD_PARTY_NOTICES.md`.
+
+## Поддержать развитие Конструктора JSON/XML
+
+[Поддержать проект](https://www.tbank-online.com/rm/r_oqpiLMwzYV.kqpqQfQFVH/8koey17033)
